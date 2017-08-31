@@ -2,9 +2,9 @@
 PYTHON=$(which python3)
 
 TESTS=0
-MODULE="ssipy"
-SETUP="/test/setup.py"
-OUTPUT_DIR="/test/_output"
+PYPKG=${1:?"argv[1] should be the package name"}
+SETUP=${SETUP_PY:-"/test/setup.py"}
+OUTPUT_DIR=${OUTPUT_DIR:-"/test/_output"}
 
 # Clean up old stuff...
 echo " [+] Cleaning up environment..."
@@ -26,7 +26,7 @@ if [ -f $SETUP ]; then
     $PYTHON $SETUP build | tee "${OUTPUT_DIR}/build.log"
     wait
     #py.test | tee "${OUTPUT_DIR}/pytest.log"
-    py.test --cov=$MODULE $MODULE/tests | tee "${OUTPUT_DIR}/pytest-cov.log"
+    py.test --cov=$PYPKG $PYPKG/tests | tee "${OUTPUT_DIR}/pytest-cov.log"
     TESTS=$?
 else
     >&2 echo " ... [!] SKIPPING: Missing $SETUP"

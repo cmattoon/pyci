@@ -10,8 +10,9 @@ Build Image
 
 Run Image
 ---------
-`docker run --rm -v $PWD:/test -t cmattoon/pyci`
+`docker run --rm -v $PWD:/test -t cmattoon/pyci <package_name>`
 
+Where `<package_name>` is the name of the Python package to test
 
 Trigger Files
 -------------

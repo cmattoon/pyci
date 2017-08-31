@@ -29,6 +29,11 @@ if [ -f $SETUP ]; then
     # Run unit tests with coverage
     py.test --cov=$PYPKG $PYPKG/tests | tee "${OUTPUT_DIR}/pytest-cov.log"
     TESTS=$?
+    if [ $TESTS -eq 0 ]; then
+        echo " ... [+] Creating sdist..."
+        $PYTHON $SETUP sdist | tee "${OUTPUT_DIR}/sdist.log"
+        echo " ... ... (done)"
+    fi
     set +o pipefail
 else
     >&2 echo " ... [!] SKIPPING: Missing $SETUP"

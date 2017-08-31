@@ -1,6 +1,5 @@
 #!/bin/sh
 PYTHON=$(which python3)
-
 TESTS=0
 PYPKG=${1:?"argv[1] should be the package name"}
 SETUP=${SETUP_PY:-"/test/setup.py"}
@@ -23,11 +22,14 @@ fi
 echo " [+] Build & Test"
 if [ -f $SETUP ]; then
     echo " ... [+] Build"
+    set -o pipefail
+    # Build the project...
     $PYTHON $SETUP build | tee "${OUTPUT_DIR}/build.log"
     wait
-    #py.test | tee "${OUTPUT_DIR}/pytest.log"
+    # Run unit tests with coverage
     py.test --cov=$PYPKG $PYPKG/tests | tee "${OUTPUT_DIR}/pytest-cov.log"
     TESTS=$?
+    set +o pipefail
 else
     >&2 echo " ... [!] SKIPPING: Missing $SETUP"
 fi
@@ -40,4 +42,11 @@ else
     >&2 echo " [!] SKIPPING: Missing .pylintrc"
 fi
 
+# Exit code 0:  All tests were collected and passed successfully
+# Exit code 1:  Tests were collected and run but some of the tests failed
+# Exit code 2:  Test execution was interrupted by the user
+# Exit code 3:  Internal error happened while executing tests
+# Exit code 4:  pytest command line usage error
+# Exit code 5:  No tests were collected
+echo "EXIT CODE = '${TESTS}'"
 exit $TESTS
